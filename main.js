@@ -1,140 +1,119 @@
-Vue.component('product-details', {
-  props: {
-    details: {
-      type: Array,
-      required: true
-    }
-  },
-  template: `
-    <ul>
-      <li v-for="detail in details">{{ detail }}</li>
-    </ul>
-  `
-})
-
-Vue.component('product', {
-
+Vue.component("product", {
   props: {
     premium: {
       type: Boolean,
       required: true
     }
   },
-
   data() {
     return {
-      brand: "Vue Mastery",
       product: "Socks",
-      description: "A pair of warm fuzzy socks",
+      brand: "Vue Mastery",
       selectedVariant: 0,
       details: ["80% cotton", "20% polyester", "Gender-neutral"],
-      onSale: false,
       variants: [
         {
           variantId: 2234,
           variantColor: "green",
           variantImage: "https://dl.dropboxusercontent.com/s/9zccs3f0pimj0wj/vmSocks-green-onWhite.jpg?dl=0",
-          variantQuantity: 7,
-          variantCart: 0
-        }, {
+          variantQuantity: 10
+        },
+        {
           variantId: 2235,
           variantColor: "blue",
           variantImage: "https://dl.dropboxusercontent.com/s/t32hpz32y7snfna/vmSocks-blue-onWhite.jpg?dl=0",
-          variantQuantity: 2,
-          variantCart: 0
+          variantQuantity: 4
         }
       ]
     }
   },
   methods: {
-    updateProduct(index) {
+    addToCart: function () {
+      this.$emit("add-to-cart", this.variants[this.selectedVariant].variantId)
+    },
+    updateProduct: function (index) {
       this.selectedVariant = index
     },
-    addToCart() {
-      this.variants[this.selectedVariant].variantCart += 1
-    },
-    removeFromCart() {
-      this.variants[this.selectedVariant].variantCart -= 1
+    removeFromCart: function () {
+      this.$emit("remove-from-cart", this.variants[this.selectedVariant].variantId)
     }
   },
   computed: {
     title() {
-      return `${this.brand} ${this.product}`
+      return this.brand + " " + this.product
     },
     image() {
       return this.variants[this.selectedVariant].variantImage
     },
-    cart() {
-      return this.variants[this.selectedVariant].variantCart
-    },
-    quantityAvailable() {
-      return this.variants[this.selectedVariant].variantQuantity - this.variants[this.selectedVariant].variantCart
-    },
-    sale() {
-      if (this.onSale) {
-        return this.brand + ' ' + this.product + ' are on sale!'
-      }
-      return this.brand + ' ' + this.product + ' are not on sale.'
+    inStock() {
+      return this.variants[this.selectedVariant].variantQuantity
     },
     shipping() {
       if (this.premium) {
         return "Free"
       }
-        return 2.99
+      return 2.99
     }
   },
   template: `
-    <div class="product">
-      
+   <div class="product">
+        
       <div class="product-image">
         <img :src="image" />
       </div>
-      
+
       <div class="product-info">
+          <h1>{{ product }}</h1>
+          <p v-if="inStock">In Stock</p>
+          <p v-else>Out of Stock</p>
+          <p>Shipping: {{ shipping }}</p>
 
-        <!-- Titre, description et caractéristiques -->
-        <h1>{{ title }}</h1>
-        <p>{{ description }}</p>
-        <product-details :details="details"></product-details>
+          <ul>
+            <li v-for="detail in details">{{ detail }}</li>
+          </ul>
 
-        <!-- Variantes -->
-        <div v-for="(variant, index) in variants" :key="variant.variantId" class="color-box" :style="{ backgroundColor: variant.variantColor }"
-          @mouseover="updateProduct(index)">
-        </div>
+          <div class="color-box"
+               v-for="(variant, index) in variants" 
+               :key="variant.variantId"
+               :style="{ backgroundColor: variant.variantColor }"
+               @mouseover="updateProduct(index)"
+               >
+          </div> 
 
-        <!-- Quantités -->
-        <p v-if="quantityAvailable > 10">In stock</p>
-        <p v-else-if="quantityAvailable > 0">Almost sold out!</p>
-        <p v-else :class="{ outOfStock: !quantityAvailable }">Out of stock</p>
+          <button v-on:click="addToCart" 
+            :disabled="!inStock"
+            :class="{ disabledButton: !inStock }"
+            >
+          Add to cart
+          </button>
 
-        <p>Shipping: {{ shipping }}</p>
+          <button @click="removeFromCart" 
+            >
+          Remove from cart
+          </button>
 
-        <!-- Promotion -->
-        <span v-show="onSale">{{ sale }}</span>
-
-        <!-- Ajout panier -->
-        <button v-on:click="addToCart" :disabled="!quantityAvailable" :class="{ disabledButton: !quantityAvailable }">
-          Add to Cart
-        </button>
-
-        <!-- Suppr panier -->
-        <button v-on:click="removeFromCart" :disabled="!cart" :class="{ disabledButton: !cart }">
-          Remove from Cart
-        </button>
-
-        <!-- Panier -->
-        <div class="cart">
-          <p>Cart({{cart}})</p>
-        </div>
-
-      </div>
+       </div>  
+    
     </div>
-  `
+   `,
 })
 
 var app = new Vue({
   el: "#app",
   data: {
-    premium: true
+    premium: true,
+    cart: []
+  },
+  methods: {
+    updateCart(id) {
+      this.cart.push(id)
+    },
+    removeItem(id) {
+      for (var i = this.cart.length - 1; i >= 0; i--) {
+        if (this.cart[i] === id) {
+          this.cart.splice(i, 1);
+        }
+      }
+    }
   }
 })
