@@ -16,29 +16,38 @@
         <img :src="image" />
       </div>
       <div class="product-info">
+
+        <!-- Titre, description et caractéristiques -->
         <h1>{{ title }}</h1>
         <p>{{ description }}</p>
         <ul>
           <li v-for="detail in details">{{ detail }}</li>
         </ul>
-        <ul>
-          <li v-for="size in sizes">{{ size }}</li>
-        </ul>
+
+        <!-- Variantes -->
         <div v-for="(variant, index) in variants" :key="variant.variantId" class="color-box" :style="{ backgroundColor: variant.variantColor }"
           @mouseover="updateProduct(index)">
         </div>
+
+        <!-- Quantités -->
         <p v-if="quantityAvailable > 10">In stock</p>
         <p v-else-if="quantityAvailable > 0">Almost sold out!</p>
         <p v-else :class="{ outOfStock: !quantityAvailable }">Out of stock</p>
-        <span v-show="onSale">{{ sale }}</span>
-        <a :href="link" target="_blank">More products like this</a>
 
+        <!-- Promotion -->
+        <span v-show="onSale">{{ sale }}</span>
+
+        <!-- Ajout panier -->
         <button v-on:click="addToCart" :disabled="!quantityAvailable" :class="{ disabledButton: !quantityAvailable }">
           Add to Cart
         </button>
+
+        <!-- Suppr panier -->
         <button v-on:click="removeFromCart" :disabled="!cart" :class="{ disabledButton: !cart }">
           Remove from Cart
         </button>
+
+        <!-- Panier -->
         <div class="cart">
           <p>Cart({{cart}})</p>
         </div>

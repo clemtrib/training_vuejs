@@ -7,10 +7,8 @@ var app = new Vue({
     product: "Socks",
     description: "A pair of warm fuzzy socks",
     selectedVariant: 0,
-    link: "https://www.amazon.com/s/ref=nb_sb_noss?url=search-alias%3Daps&field-keywords=socks",
     details: ["80% cotton", "20% polyester", "Gender-neutral"],
     onSale: false,
-    sizes: ["38-39", "40-41", "42-43"],
     variants: [
       {
         variantId: 2234,
@@ -28,14 +26,14 @@ var app = new Vue({
     ]
   },
   methods: {
+    updateProduct(index) {
+      this.selectedVariant = index
+    },
     addToCart() {
       this.variants[this.selectedVariant].variantCart += 1
     },
     removeFromCart() {
       this.variants[this.selectedVariant].variantCart -= 1
-    },
-    updateProduct(index) {
-      this.selectedVariant = index
     }
   },
   computed: {
@@ -55,7 +53,7 @@ var app = new Vue({
       if (this.onSale) {
         return this.brand + ' ' + this.product + ' are on sale!'
       }
-      return this.brand + ' ' + this.product + ' are not on sale'
+      return this.brand + ' ' + this.product + ' are not on sale.'
     }
   }
 })
