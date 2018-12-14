@@ -7,7 +7,7 @@ var app = new Vue({
     description: 'A pair of warm fuzzy socks',
     image: 'https://dl.dropboxusercontent.com/s/9zccs3f0pimj0wj/vmSocks-green-onWhite.jpg?dl=0',
     link: 'https://www.amazon.com/s/ref=nb_sb_noss?url=search-alias%3Daps&field-keywords=socks',
-    inventory: 100,
+    inventory: 7,
     details: ["80% cotton", "20% polyester", "Gender-neutral"],
     onSale: false,
     sizes: ["38-39", "40-41", "42-43"],
@@ -30,6 +30,9 @@ var app = new Vue({
     },
     removeFromCart() { 
       this.cart -= 1 
+    },
+    getQuantityAvailable() { 
+      return this.inventory - this.cart  
     },
     updateProduct(variantImage) { 
       this.image = variantImage

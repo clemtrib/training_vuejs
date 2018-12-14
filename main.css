@@ -82,3 +82,7 @@ textarea {
 ul {
   padding: 5px 40px;
 }
+
+.outOfStock {
+  text-decoration: line-through;
+}
